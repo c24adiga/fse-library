@@ -1,0 +1,100 @@
+server:
+  port: 0
+  
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    initialInstanceInfoReplicationIntervalSeconds: 5    
+  instance:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    leaseRenewalIntervalInSeconds: 30
+    leaseExpirationDurationInSeconds: 90
+    preferIpAddress: true
+
+    
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.web: DEBUG
+    org.springframework.web.cors: DEBUG
+  file: ./logs/${spring.application.name}.log
+
+security:
+  oauth2:
+    resource:
+      id: id
+
+service:
+    atomic: 
+       kafkaservice:
+          name: kafkamessageservice
+          version: v1
+          versionname: ${service.atomic.kafkaservice.name}_${service.atomic.kafkaservice.version}
+          enabled: true
+          url: kafka/audit
+---
+spring:
+  profiles: local
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+      
+mongo:
+  db:
+    user: test
+    password: test
+    host: 127.0.0.1
+    port: 27017
+    database: test
+
+security:
+  oauth2:
+    resource:
+      userInfoUri: http://localhost:9090/services/user
+
+---
+spring:
+  profiles: dev
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+      
+mongo:
+  db:
+    user: test
+    password: test
+    host: 172.26.116.75
+    port: 27017
+    database: test
+
+security:
+  oauth2:
+    resource:
+      userInfoUri: http://localhost:9090/services/user
+
+---
+spring:
+  profiles: docker
+ 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.99.100:8761/eureka/ 
+
+mongo:
+  db:
+    user: test
+    password: test
+    host: 192.168.99.100
+    port: 27017
+    database: test     
+    
+security:
+  oauth2:
+    resource:
+      userInfoUri: http://192.168.99.100:9090/services/user

@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: authservice
+  cloud:
+    config:
+      enabled: false
+  profiles:
+    active: dev

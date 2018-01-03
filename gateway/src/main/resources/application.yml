@@ -1,0 +1,100 @@
+server:
+  port: 8765
+  server-header: Web
+  error:
+    whitelabel:
+      enabled: false
+  
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    initialInstanceInfoReplicationIntervalSeconds: 40    
+  instance:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    leaseRenewalIntervalInSeconds: 30
+    leaseExpirationDurationInSeconds: 90
+    preferIpAddress: true
+
+ribbon:
+    ServerListRefreshInterval: 1000  
+    ReadTimeout: 60000
+    ConnectTimeout: 60000
+    OkToRetryOnAllOperations: false  
+
+zuul:
+  health:
+    enabled: false
+  ignoredServices: "*"
+  routes:
+    libraryservice:
+      path: /fse/lib/**
+    userservice:
+      path: /fse/usr/**
+    auditservice:
+      path: /fse/aud/**
+    authservice: 
+      path: /fse/auth/**
+    kafkamessageservice: 
+      path: /fse/kfa/**
+    
+hystrix:
+  command:
+    default:
+      execution.timeout.enabled: false
+      
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.web: INFO
+    com.ctc.ctfs.dss.gatewayservice.filters: DEBUG
+  file: ./logs/${spring.application.name}.log
+    
+management:
+  add-application-context-header: false
+
+gatewayserver:
+  cors:
+    methods: OPTIONS,POST
+    allow-credentials: true
+    allow-header: all  
+
+
+---
+spring:
+  profiles: local
+
+eureka:  
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+      
+gatewayserver:
+  cors:
+    origins: http://127.0.0.1:4200
+
+---
+spring:
+  profiles: dev
+
+eureka:  
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+      
+gatewayserver:
+  cors:
+    origins: http://127.0.0.1:4200
+       
+---
+spring:
+  profiles: docker
+ 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.99.100:8761/eureka/
+      
+gatewayserver:
+  cors:
+    origins: http://192.168.99.100:4200      

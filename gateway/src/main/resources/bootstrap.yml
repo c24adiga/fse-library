@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: gatewayservice
+  cloud:
+    config:
+      enabled: false
+  profiles:
+    active: dev
+
